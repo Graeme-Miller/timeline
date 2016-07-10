@@ -2,11 +2,9 @@ package com.mayorgraeme;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
 import java.time.LocalTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -25,8 +23,8 @@ public class SimulationStateTest {
     Event eventOne;
     Event eventTwo;
 
-    Person personOne = new Person("Alice", Collections.emptySet());
-    Person personTwo = new Person("Bob", Collections.emptySet());
+    Person personOne = new Person("Alice", Collections.emptySet(), Collections.emptySet());
+    Person personTwo = new Person("Bob", Collections.emptySet(), Collections.emptySet());
 
     @Before
     public void setup(){

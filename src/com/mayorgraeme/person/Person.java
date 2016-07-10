@@ -13,11 +13,13 @@ public class Person {
 
     private final String name;
     private final Set<Role> roleSet;
+    private final Set<PersonDesires> personDesires;
     private final UUID uuid;
 
-    public Person(String name, Set<Role> roleSet) {
+    public Person(String name, Set<Role> roleSet, Set<PersonDesires> personDesires) {
+        this.roleSet = roleSet;
+        this.personDesires = personDesires;
         this.name = name;
-        this.roleSet = new HashSet<Role>(roleSet);
         this.uuid = UUID.randomUUID();
     }
 
@@ -31,6 +33,10 @@ public class Person {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public Set<PersonDesires> getPersonDesires() {
+        return personDesires;
     }
 
     @Override
@@ -54,6 +60,7 @@ public class Person {
         return "Person{" +
                 "name='" + name + '\'' +
                 ", roleSet=" + roleSet +
+                ", personDesires=" + personDesires +
                 ", uuid=" + uuid +
                 '}';
     }

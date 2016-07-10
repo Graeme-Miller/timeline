@@ -59,7 +59,7 @@ public class SimulationState {
         checkTimeCollision(eventInstance);
     }
 
-    private void checkTimeCollision(EventInstance eventInstance) {
+    public void checkTimeCollision(EventInstance eventInstance) {
         eventInstance.getAttendees().stream().forEach(person -> {
             Set<EventInstance> eventInstancesToKeep = new HashSet<>();
             Set<EventInstance> eventInstancesToRemove = new HashSet<>();
@@ -108,5 +108,13 @@ public class SimulationState {
 
     public Map<Person, Set<EventInstance>> getPersonEventInstanceMap() {
         return personEventInstanceMap;
+    }
+
+    @Override
+    public String toString() {
+        return "SimulationState{" +
+                "eventInstanceSet=" + eventInstanceSet +
+                ", personEventInstanceMap=" + personEventInstanceMap +
+                '}';
     }
 }
