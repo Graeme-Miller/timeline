@@ -19,6 +19,11 @@ public class EventInstance {
     private LocalTime end;
     private final Set<Person> attendees;
 
+
+    public EventInstance(EventInstance eventInstance){
+        this(eventInstance.getEvent(), eventInstance.getAttendees(), eventInstance.getStart(), eventInstance.getEnd());
+    }
+
     public EventInstance(Event event, LocalTime start, LocalTime end) {
         this(event, Collections.emptySet(), start, end);
     }

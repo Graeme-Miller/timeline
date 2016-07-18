@@ -28,22 +28,35 @@ public class Main {
         events.add(eat);
         events.add(fight);
 
-        Person person = new Person("Graeme", Collections.emptySet(), Collections.emptySet());
+        Person graeme = new Person("Graeme", Collections.emptySet(), Collections.emptySet());
+        Person lizzie = new Person("Lizzie", Collections.emptySet(), Collections.emptySet());
 
-        Simulation simulation = new Simulation(events, Collections.singleton(person));
+        Set<Person> people = new HashSet<>();
+        people.add(graeme);
+        people.add(lizzie);
+
+        Simulation simulation = new Simulation(events, people);
         simulation.go();
         SimulationState simulationState = simulation.getSimulationState();
 
-        ArrayList<EventInstance> eventInstances = new ArrayList(simulationState.getEventInstanceSet());
-        Collections.sort(eventInstances, new Comparator<EventInstance>() {
-            @Override
-            public int compare(EventInstance o1, EventInstance o2) {
-                return o1.getStart().compareTo(o2.getEnd());
-            }
-        });
         System.out.println("---------EVENTS---------");
-        for (EventInstance eventInstance : eventInstances) {
-            System.out.println("Name "+eventInstance.getEvent().getName() + " start " +eventInstance.getStart() + " end "+ eventInstance.getEnd() );
+        for (Person person : simulationState.getPersonEventInstanceMap().keySet()) {
+            System.out.println("Person: "+person);
+
+            ArrayList<EventInstance> eventInstances = new ArrayList(simulationState.getPersonEventInstanceMap().get(person));
+
+            Collections.sort(eventInstances, new Comparator<EventInstance>() {
+                @Override
+                public int compare(EventInstance o1, EventInstance o2) {
+                    return o1.getStart().compareTo(o2.getEnd());
+                }
+            });
+
+            for (EventInstance eventInstance : eventInstances) {
+                if(eventInstance.getAttendees().size() > 1) {
+                    System.out.println("Name " + eventInstance.getEvent().getName() + " start " + eventInstance.getStart() + " end " + eventInstance.getEnd() + "UUID " + eventInstance.getUuid());
+                }
+            }
         }
 
     }

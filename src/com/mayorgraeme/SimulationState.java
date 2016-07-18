@@ -13,10 +13,12 @@ import com.mayorgraeme.event.Event;
 import com.mayorgraeme.event.EventInstance;
 import com.mayorgraeme.person.Person;
 
+import com.google.common.collect.Sets;
+
 /**
  * Created by graememiller on 09/07/2016.
  */
-public class SimulationState {
+public class SimulationState implements Cloneable {
 
 
     private final Set<EventInstance> eventInstanceSet;
@@ -24,6 +26,27 @@ public class SimulationState {
 
     public SimulationState() {
         this(Collections.emptySet(), Collections.emptyMap());
+    }
+
+    public static SimulationState copySimulationState(SimulationState simulationState) {
+        Set<EventInstance> eventInstanceSet = new HashSet<>(simulationState.getEventInstanceSet().size());
+        for (EventInstance eventInstance : simulationState.getEventInstanceSet()) {
+            eventInstanceSet.add(new EventInstance(eventInstance));
+        }
+
+        Map<Person, Set<EventInstance>> personEventInstanceMapOld = simulationState.getPersonEventInstanceMap();
+        Map<Person, Set<EventInstance>> personEventInstanceMapNew = new HashMap<>(personEventInstanceMapOld.size());
+        for (Person person : personEventInstanceMapOld.keySet()) {
+            Set<EventInstance> eventInstancesFromPersonMap = personEventInstanceMapOld.get(person);
+            Set<EventInstance> personEventInstanceSet = new HashSet<>(eventInstancesFromPersonMap.size());
+
+            for (EventInstance eventInstance : eventInstancesFromPersonMap) {
+                personEventInstanceSet.add(new EventInstance(eventInstance));
+            }
+            personEventInstanceMapNew.put(person, personEventInstanceSet);
+        }
+
+        return new SimulationState(eventInstanceSet, personEventInstanceMapNew);
     }
 
     public SimulationState(Set<EventInstance> eventInstanceSet, Map<Person, Set<EventInstance>> personEventInstanceMap) {
@@ -37,6 +60,11 @@ public class SimulationState {
     }
 
     public void updateEventInstsanceTime(EventInstance eventInstance, LocalTime startTime, LocalTime endTime){
+        if(!startTime.isBefore(endTime)) {
+            System.out.println("Tried to create an event with start before end");
+            return;
+        }
+
         eventInstance.setStart(startTime);
         eventInstance.setEnd(endTime);
 
@@ -60,7 +88,7 @@ public class SimulationState {
     }
 
     public void checkTimeCollision(EventInstance eventInstance) {
-        eventInstance.getAttendees().stream().forEach(person -> {
+        Sets.newCopyOnWriteArraySet(eventInstance.getAttendees()).stream().forEach(person -> {
             Set<EventInstance> eventInstancesToKeep = new HashSet<>();
             Set<EventInstance> eventInstancesToRemove = new HashSet<>();
 
