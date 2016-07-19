@@ -1,16 +1,16 @@
 package com.mayorgraeme;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.mayorgraeme.event.Event;
 import com.mayorgraeme.event.EventInstance;
+import com.mayorgraeme.event.eventrequirement.EventRequirement;
 import com.mayorgraeme.person.Person;
 
 import com.google.common.collect.Sets;
@@ -128,6 +128,29 @@ public class SimulationState implements Cloneable {
             personEventInstanceMap.put(person, new HashSet<>());
         }
         personEventInstanceMap.get(person).add(eventInstance);
+    }
+
+    public double getScore(){
+
+        double score = 0;
+        for (Person person : personEventInstanceMap.keySet()) {
+            for (EventInstance eventInstance : personEventInstanceMap.get(person)) {
+                boolean reqsMet = true;
+                for (EventRequirement eventRequirement : eventInstance.getEvent().getEventRequirements()) {
+                    if(!eventRequirement.requirementMet(eventInstance, this)) {
+                        reqsMet = false;
+                        break;
+                    }
+                }
+
+                if(reqsMet) {
+                    double thirtyMinsBetween = ChronoUnit.MINUTES.between(eventInstance.getStart(), eventInstance.getEnd()) / 30;
+                    score += eventInstance.getEvent().getScorePerThirtyMins() * thirtyMinsBetween;
+                }
+            }
+        }
+
+        return score;
     }
 
     public Set<EventInstance> getEventInstanceSet() {

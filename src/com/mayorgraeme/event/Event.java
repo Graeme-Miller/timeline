@@ -13,11 +13,13 @@ public class Event {
     private final String name;
     private final UUID uuid;
     private final Set<EventRequirement> eventRequirements;
+    private final double score;
 
-    public Event(Set<EventRequirement> eventRequirements, String name) {
+    public Event(Set<EventRequirement> eventRequirements, String name, double score) {
         this.eventRequirements = eventRequirements;
         this.name = name;
         uuid = UUID.randomUUID();
+        this.score = score;
     }
 
     public Set<EventRequirement> getEventRequirements() {
@@ -30,6 +32,10 @@ public class Event {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public double getScorePerThirtyMins() {
+        return score;
     }
 
     @Override
@@ -54,6 +60,7 @@ public class Event {
                 "eventRequirements=" + eventRequirements +
                 ", name='" + name + '\'' +
                 ", uuid=" + uuid +
+                ", score=" + score +
                 '}';
     }
 }

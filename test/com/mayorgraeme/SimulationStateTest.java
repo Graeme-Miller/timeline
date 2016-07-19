@@ -29,8 +29,8 @@ public class SimulationStateTest {
     @Before
     public void setup(){
         simulationState = new SimulationState();
-        eventOne = new Event(Collections.emptySet(), "Party");
-        eventTwo = new Event(Collections.emptySet(), "Work");
+        eventOne = new Event(Collections.emptySet(), "Party", 1);
+        eventTwo = new Event(Collections.emptySet(), "Work", 1);
     }
 
     private void checkEvent(Event event, EventInstance createdInstance, LocalTime start, LocalTime end) {

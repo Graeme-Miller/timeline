@@ -1,6 +1,5 @@
 package com.mayorgraeme;
 
-import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -35,7 +34,7 @@ public class Simulation {
         simulationState = makeRandomStart(simulationState);
 
         double temp = 1500;
-        double alpha = 0.85;
+        double alpha = 0.95;
 
 
         SimulationState simulationStateNew;
@@ -44,7 +43,7 @@ public class Simulation {
             makeRandomChange(simulationStateNew);
             double acceptanceProbability = acceptanceProbability(random, simulationState, simulationStateNew, temp);
 
-            if(acceptanceProbability < random.nextDouble()) {
+            if(acceptanceProbability > random.nextDouble()) {
                 simulationState = simulationStateNew;
             }
 
@@ -71,6 +70,11 @@ public class Simulation {
     }
 
     private void addRandomPerson(SimulationState simulationState){
+        if(simulationState.getEventInstanceSet().isEmpty()){
+            System.out.println("addRandomPerson called when there are no events. Skipping");
+            return;
+        }
+
         EventInstance randomEventInstance = getRandomFromCollection(simulationState.getEventInstanceSet());
 
         if(randomEventInstance.getAttendees().size() == people.size()) {
@@ -82,6 +86,11 @@ public class Simulation {
         simulationState.addPersonToEventInstance(randomEventInstance, getRandomFromCollection(allPeopleNotAtRandomEvent));
     }
     private void removeRandomPerson(SimulationState simulationState){
+        if(simulationState.getEventInstanceSet().isEmpty()){
+            System.out.println("removeRandomPerson called when there are no events. Skipping");
+            return;
+        }
+
         EventInstance randomEventInstance = getRandomFromCollection(simulationState.getEventInstanceSet());
         Set<Person> attendees = randomEventInstance.getAttendees();
 
@@ -96,11 +105,11 @@ public class Simulation {
         Event randomEventFromCollection = getRandomFromCollection(events);
 
         int startHour = random.nextInt(23);
-        int startMin = random.nextInt(2) == 1?0:30;
+        int startMin = 0;//random.nextInt(2) == 1?0:30;
         LocalTime startTime = LocalTime.of(startHour, startMin);
 
-        int endHour = random.nextInt(4) + startHour + 1;
-        int endMin = endHour==23||random.nextInt(2) == 1?0:30; //zero if 24, or 50% chance
+        int endHour = startHour; //random.nextInt(2) + startHour + 1;
+        int endMin = 30; // endHour==23||random.nextInt(2) == 1?0:30; //zero if 24, or 50% chance
         endHour = Math.min(23, endHour);
 
         System.out.println("start hour "+ startHour + " start min "+ startMin + " / end hour " +endHour+ " end min "+endMin);
@@ -109,6 +118,10 @@ public class Simulation {
         simulationState.createEventInstance(randomEventFromCollection, startTime, endTime, Collections.singleton(getRandomFromCollection(people)));
     }
     private void removeRandomEvent(SimulationState simulationState){
+        if(simulationState.getEventInstanceSet().isEmpty()){
+            System.out.println("remove event called when there are no events. Skipping");
+            return;
+        }
         simulationState.removeEventInstance(getRandomFromCollection(simulationState.getEventInstanceSet()));
     }
 
@@ -118,18 +131,16 @@ public class Simulation {
 
         int change = random.nextInt(4);
         switch (change) {
-            case 0: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart().minus(30, ChronoUnit.MINUTES), randomEventInstance.getEnd());
-            case 1: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart().plus(30, ChronoUnit.MINUTES), randomEventInstance.getEnd());
-            case 2: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart(), randomEventInstance.getEnd().minus(30, ChronoUnit.MINUTES));
-            case 3: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart(), randomEventInstance.getEnd().plus(30, ChronoUnit.MINUTES));
+            case 0: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart().minus(30, ChronoUnit.MINUTES), randomEventInstance.getEnd()); break;
+            case 1: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart().plus(30, ChronoUnit.MINUTES), randomEventInstance.getEnd()); break;
+            case 2: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart(), randomEventInstance.getEnd().minus(30, ChronoUnit.MINUTES)); break;
+            case 3: simulationState.updateEventInstsanceTime(randomEventInstance, randomEventInstance.getStart(), randomEventInstance.getEnd().plus(30, ChronoUnit.MINUTES)); break;
         }
     }
 
     private SimulationState makeRandomStart(SimulationState simulationState) {
         final int minEventsMultiplyer = 1;
         final int maxEventsMultiplyer = 6;
-
-        final int maxPeoplePerEvent = 5;
 
         final int numberOfEventsMultiplyer = random.nextInt(maxEventsMultiplyer + 1) + minEventsMultiplyer;
         final int numberOfEvents = numberOfEventsMultiplyer * events.size();
@@ -151,8 +162,8 @@ public class Simulation {
 
 
     public static double acceptanceProbability(Random random, SimulationState simulationStateOld, SimulationState simulationStateNew, double temperature){
-        double oldScore = getScore(simulationStateOld, random);
-        double newScore = getScore(simulationStateNew, random);
+        double oldScore = simulationStateOld.getScore();
+        double newScore = simulationStateNew.getScore();
 
         if(newScore > oldScore) {
             return 1.0;
@@ -161,9 +172,6 @@ public class Simulation {
         return Math.exp((oldScore - newScore)/temperature);
     }
 
-    public static double getScore(SimulationState simulationState, Random random) {
-        return random.nextInt(100);
-    }
 
 
 }

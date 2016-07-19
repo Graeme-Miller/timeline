@@ -8,5 +8,5 @@ import com.mayorgraeme.event.EventInstance;
  */
 public interface EventRequirement {
 
-    boolean requirementMet(EventInstance event, SimulationState simulationState);
+    boolean requirementMet(EventInstance eventInstance, SimulationState simulationState);
 }
