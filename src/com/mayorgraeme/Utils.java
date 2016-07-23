@@ -38,6 +38,10 @@ public class Utils {
 
             LocalTime lastPrintedTime = LocalTime.MIDNIGHT;
             for (EventInstance eventInstance : eventInstancesPerson) {
+                if(!eventInstance.areReqsMet(simulationState)){
+                    continue;
+                }
+
                 LocalTime start = eventInstance.getStart();
                 LocalTime end = eventInstance.getEnd();
 

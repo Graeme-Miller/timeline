@@ -139,17 +139,14 @@ public class SimulationState implements Cloneable {
         double score = 0;
         for (Person person : personEventInstanceMap.keySet()) {
             for (EventInstance eventInstance : personEventInstanceMap.get(person)) {
-                boolean reqsMet = true;
-                for (EventRequirement eventRequirement : eventInstance.getEvent().getEventRequirements()) {
-                    if(!eventRequirement.requirementMet(eventInstance, this)) {
-                        reqsMet = false;
-                        break;
-                    }
-                }
 
-                if(reqsMet) {
-                    double thirtyMinsBetween = ChronoUnit.MINUTES.between(eventInstance.getStart(), eventInstance.getEnd()) / 30;
-                    score += eventInstance.getEvent().getScorePerThirtyMins() * thirtyMinsBetween;
+                double thirtyMinsBetween = ChronoUnit.MINUTES.between(eventInstance.getStart(), eventInstance.getEnd()) / 30;
+                double scoreToAdd = eventInstance.getEvent().getScorePerThirtyMins() * thirtyMinsBetween * eventInstance.getAttendees().size();
+
+                if(eventInstance.areReqsMet(this)) {
+                    score += scoreToAdd;
+                } else {
+                    score += scoreToAdd/2;
                 }
             }
         }

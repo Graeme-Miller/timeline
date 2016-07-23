@@ -33,7 +33,7 @@ public class Simulation {
     public void go(){
         simulationState = makeRandomStart(simulationState);
 
-        double temp = 1500;
+        double temp = 15000;
         double alpha = 0.95;
 
 
@@ -170,11 +170,11 @@ public class Simulation {
     public static double acceptanceProbability(Random random, SimulationState simulationStateOld, SimulationState simulationStateNew, double temperature){
         double oldScore = simulationStateOld.getScore();
         double newScore = simulationStateNew.getScore();
-        System.out.println(oldScore + " " + newScore);
-        if(newScore > oldScore) {
+
+        if(newScore >= oldScore) {
             return 1.0;
         }
 
-        return Math.exp((oldScore - newScore)/temperature);
+        return Math.exp((newScore - oldScore)/temperature);
     }
 }

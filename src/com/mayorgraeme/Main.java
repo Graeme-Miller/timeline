@@ -1,24 +1,17 @@
 package com.mayorgraeme;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.mayorgraeme.event.Event;
-import com.mayorgraeme.event.EventInstance;
 import com.mayorgraeme.event.eventrequirement.MaxDurationEventRequirement;
 import com.mayorgraeme.event.eventrequirement.MaxPeopleOfRoleEventRequirement;
 import com.mayorgraeme.event.eventrequirement.MinPeopleOfRoleEventRequirement;
 import com.mayorgraeme.person.Person;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 

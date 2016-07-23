@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.mayorgraeme.SimulationState;
+import com.mayorgraeme.event.eventrequirement.EventRequirement;
 import com.mayorgraeme.person.Person;
 
 import com.google.common.base.Strings;
@@ -36,6 +38,15 @@ public class EventInstance {
         this.start = start;
         this.uuid = UUID.randomUUID();
         this.event = event;
+    }
+
+    public boolean areReqsMet(SimulationState simulationState) {
+        for (EventRequirement eventRequirement : getEvent().getEventRequirements()) {
+            if(!eventRequirement.requirementMet(this, simulationState)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Event getEvent() {
