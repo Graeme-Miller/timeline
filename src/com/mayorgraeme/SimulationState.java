@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.mayorgraeme.event.Event;
 import com.mayorgraeme.event.EventInstance;
@@ -29,9 +30,9 @@ public class SimulationState implements Cloneable {
     }
 
     public static SimulationState copySimulationState(SimulationState simulationState) {
-        Set<EventInstance> eventInstanceSet = new HashSet<>(simulationState.getEventInstanceSet().size());
+        Map<UUID, EventInstance> eventInstanceMap = new HashMap<>(simulationState.getEventInstanceSet().size());
         for (EventInstance eventInstance : simulationState.getEventInstanceSet()) {
-            eventInstanceSet.add(new EventInstance(eventInstance));
+            eventInstanceMap.put(eventInstance.getUuid(), new EventInstance(eventInstance));
         }
 
         Map<Person, Set<EventInstance>> personEventInstanceMapOld = simulationState.getPersonEventInstanceMap();
@@ -46,7 +47,7 @@ public class SimulationState implements Cloneable {
             personEventInstanceMapNew.put(person, personEventInstanceSet);
         }
 
-        return new SimulationState(eventInstanceSet, personEventInstanceMapNew);
+        return new SimulationState(new HashSet<>(eventInstanceMap.values()), personEventInstanceMapNew);
     }
 
     public SimulationState(Set<EventInstance> eventInstanceSet, Map<Person, Set<EventInstance>> personEventInstanceMap) {
@@ -146,7 +147,7 @@ public class SimulationState implements Cloneable {
                 if(eventInstance.areReqsMet(this)) {
                     score += scoreToAdd;
                 } else {
-                    score += scoreToAdd/2;
+                    score += scoreToAdd/5;
                 }
             }
         }

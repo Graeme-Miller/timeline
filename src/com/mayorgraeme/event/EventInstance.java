@@ -25,11 +25,19 @@ public class EventInstance {
 
 
     public EventInstance(EventInstance eventInstance){
-        this(eventInstance.getEvent(), eventInstance.getAttendees(), eventInstance.getStart(), eventInstance.getEnd());
+        this(eventInstance.getEvent(), eventInstance.getAttendees(), eventInstance.getStart(), eventInstance.getEnd(), eventInstance.getUuid());
     }
 
     public EventInstance(Event event, LocalTime start, LocalTime end) {
         this(event, Collections.emptySet(), start, end);
+    }
+
+    public EventInstance(Event event, Set<Person> attendees, LocalTime start, LocalTime end, UUID uuid) {
+        this.attendees = new HashSet<Person>(attendees);
+        this.end = end;
+        this.start = start;
+        this.uuid = uuid;
+        this.event = event;
     }
 
     public EventInstance(Event event, Set<Person> attendees, LocalTime start, LocalTime end) {
