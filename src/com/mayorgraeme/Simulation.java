@@ -154,6 +154,7 @@ public class Simulation {
             addRandomEvent(simulationState);
         }
 
+        Utils.printSimulationState(simulationState);
         return simulationState;
     }
 
@@ -176,7 +177,4 @@ public class Simulation {
 
         return Math.exp((oldScore - newScore)/temperature);
     }
-
-
-
 }

@@ -93,7 +93,10 @@ public class SimulationState implements Cloneable {
             Set<EventInstance> eventInstancesToRemove = new HashSet<>();
 
             personEventInstanceMap.get(person).stream().forEach(eventInstanceFromStream -> {
-                if (eventInstanceFromStream.getStart().isAfter(eventInstance.getEnd())
+                if (eventInstanceFromStream.getStart().compareTo(eventInstance.getStart()) == 0 ||
+                        eventInstanceFromStream.getEnd().compareTo(eventInstance.getEnd()) == 0) {
+                    eventInstancesToRemove.add(eventInstanceFromStream);
+                } else if (eventInstanceFromStream.getStart().isAfter(eventInstance.getEnd())
                         || eventInstanceFromStream.getEnd().isBefore(eventInstance.getStart())) {
                     eventInstancesToKeep.add(eventInstanceFromStream);
                 } else {
@@ -128,6 +131,7 @@ public class SimulationState implements Cloneable {
             personEventInstanceMap.put(person, new HashSet<>());
         }
         personEventInstanceMap.get(person).add(eventInstance);
+        checkTimeCollision(eventInstance);
     }
 
     public double getScore(){
