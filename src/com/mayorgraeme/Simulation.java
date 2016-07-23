@@ -127,6 +127,11 @@ public class Simulation {
 
 
     private void moveRandomEvent(SimulationState simulationState){
+        if(simulationState.getEventInstanceSet().isEmpty()){
+            System.out.println("moveRandomEvent called when there are no events. Skipping");
+            return;
+        }
+
         EventInstance randomEventInstance = getRandomFromCollection(simulationState.getEventInstanceSet());
 
         int change = random.nextInt(4);
@@ -139,8 +144,8 @@ public class Simulation {
     }
 
     private SimulationState makeRandomStart(SimulationState simulationState) {
-        final int minEventsMultiplyer = 1;
-        final int maxEventsMultiplyer = 6;
+        final int minEventsMultiplyer = 20;
+        final int maxEventsMultiplyer = 30;
 
         final int numberOfEventsMultiplyer = random.nextInt(maxEventsMultiplyer + 1) + minEventsMultiplyer;
         final int numberOfEvents = numberOfEventsMultiplyer * events.size();
@@ -164,7 +169,7 @@ public class Simulation {
     public static double acceptanceProbability(Random random, SimulationState simulationStateOld, SimulationState simulationStateNew, double temperature){
         double oldScore = simulationStateOld.getScore();
         double newScore = simulationStateNew.getScore();
-
+        System.out.println(oldScore + " " + newScore);
         if(newScore > oldScore) {
             return 1.0;
         }

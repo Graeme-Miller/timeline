@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import com.mayorgraeme.person.Person;
 
+import com.google.common.base.Strings;
+
 /**
  * Created by graememiller on 09/07/2016.
  */
@@ -74,13 +76,11 @@ public class EventInstance {
 
     @Override
     public String toString() {
-        return "EventInstance{" +
-                "attendees=" + attendees +
-                ", uuid=" + uuid +
-                ", event=" + event +
-                ", start=" + start +
-                ", end=" + end +
-                '}';
+        String name = "EI-"
+                        +Strings.padEnd(event.getName().substring(0, Math.min(event.getName().length(), 5)), 5, '-')
+                        +"-"+uuid.toString().substring(33);
+
+        return Strings.padEnd(name, 13, '-');
     }
 
     @Override

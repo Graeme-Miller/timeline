@@ -1,6 +1,7 @@
 package com.mayorgraeme;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import com.mayorgraeme.event.eventrequirement.MaxPeopleOfRoleEventRequirement;
 import com.mayorgraeme.event.eventrequirement.MinPeopleOfRoleEventRequirement;
 import com.mayorgraeme.person.Person;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -70,24 +72,56 @@ public class Main {
         SimulationState simulationState = simulation.getSimulationState();
 
         System.out.println("---------EVENTS---------");
+        System.out.print("|-----Name -----|");
+        System.out.print("|-----00:00-----|");
+        printUpTo(LocalTime.MIDNIGHT.plusMinutes(30), LocalTime.MIDNIGHT);
+        System.out.println();
+
         for (Person person : simulationState.getPersonEventInstanceMap().keySet()) {
-            System.out.println("Person: "+person);
+            System.out.print("|-");
+            System.out.print(Strings.padEnd(person.getName(), 14, '-'));
+            System.out.print("|");
 
-            ArrayList<EventInstance> eventInstances = new ArrayList(simulationState.getPersonEventInstanceMap().get(person));
+            ArrayList<EventInstance> eventInstancesPerson = new ArrayList(simulationState.getPersonEventInstanceMap().get(person));
 
-            Collections.sort(eventInstances, new Comparator<EventInstance>() {
+            Collections.sort(eventInstancesPerson, new Comparator<EventInstance>() {
                 @Override
                 public int compare(EventInstance o1, EventInstance o2) {
                     return o1.getStart().compareTo(o2.getEnd());
                 }
             });
 
-            for (EventInstance eventInstance : eventInstances) {
-                //if(eventInstance.getAttendees().size() > 1) {
-                    System.out.println("Name " + eventInstance.getEvent().getName() + " start " + eventInstance.getStart() + " end " + eventInstance.getEnd() + "UUID " + eventInstance.getUuid());
-               // }
+            LocalTime lastPrintedTime = LocalTime.MIDNIGHT;
+            for (EventInstance eventInstance : eventInstancesPerson) {
+                LocalTime start = eventInstance.getStart();
+                LocalTime end = eventInstance.getEnd();
+
+                if(lastPrintedTime.compareTo(start) != 0) {
+                    printStringUpTo(lastPrintedTime, start, "*************");
+                    lastPrintedTime = start;
+                }
+
+                printStringUpTo(lastPrintedTime, end.plusMinutes(30), eventInstance.toString());
+                lastPrintedTime = end.plusMinutes(30);
             }
+            System.out.println();
         }
 
+    }
+
+    private static void printUpTo(LocalTime start, LocalTime end) {
+        LocalTime current = start;
+        while(current.compareTo(end) != 0) {
+            System.out.print("|-----"+current+"-----|");
+            current = current.plusMinutes(30);
+        }
+    }
+
+    private static void printStringUpTo(LocalTime start, LocalTime end, String string) {
+        LocalTime current = start;
+        while(current.compareTo(end) != 0) {
+            System.out.print("|-"+string+"-|");
+            current = current.plusMinutes(30);
+        }
     }
 }
