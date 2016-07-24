@@ -22,6 +22,10 @@ public class MinPeopleOfRoleEventRequirement implements EventRequirement {
     public boolean requirementMet(EventInstance event, SimulationState simulationState) {
         Map<Role, Double> roleToNumberCopy = new HashMap<>(roleToNumber);
 
+//        if(event.getAttendees().size() > 2 ){
+//            System.out.println("STOP");
+//        }
+
         event.getAttendees().stream().forEach(person -> person.getRoleSet().forEach(role -> {
             if(roleToNumberCopy.containsKey(role)){
                 Double currentValue = roleToNumberCopy.get(role);

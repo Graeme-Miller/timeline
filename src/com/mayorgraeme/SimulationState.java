@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import com.mayorgraeme.event.Event;
 import com.mayorgraeme.event.EventInstance;
-import com.mayorgraeme.event.eventrequirement.EventRequirement;
 import com.mayorgraeme.person.Person;
 
 import com.google.common.collect.Sets;
@@ -146,13 +145,35 @@ public class SimulationState implements Cloneable {
 
                 if(eventInstance.areReqsMet(this)) {
                     score += scoreToAdd;
-                } else {
-                    score += scoreToAdd/5;
                 }
+//                else {
+//                    score += scoreToAdd/5;
+//                }
             }
         }
 
         return score;
+    }
+
+    public void printScoreSplit(){
+
+        double scoreInvalid = 0;
+        double scoreValid = 0;
+        for (Person person : personEventInstanceMap.keySet()) {
+            for (EventInstance eventInstance : personEventInstanceMap.get(person)) {
+
+                double thirtyMinsBetween = ChronoUnit.MINUTES.between(eventInstance.getStart(), eventInstance.getEnd()) / 30;
+                double scoreToAdd = eventInstance.getEvent().getScorePerThirtyMins() * thirtyMinsBetween * eventInstance.getAttendees().size();
+
+                if (!eventInstance.areReqsMet(this)) {
+                    scoreInvalid += scoreToAdd;
+                } else {
+                    scoreValid += scoreToAdd;
+                }
+            }
+        }
+
+        System.out.println(scoreValid+" "+scoreInvalid);
     }
 
     public Set<EventInstance> getEventInstanceSet() {

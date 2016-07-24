@@ -4,6 +4,8 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
 
@@ -33,14 +35,14 @@ public class Simulation {
     public void go(){
         simulationState = makeRandomStart(simulationState);
 
-        double temp = 15;
+        double temp = 1500;
         double alpha = 0.95;
 
 
         SimulationState simulationStateNew;
         while(temp > 1) {
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 100; i++) {
                 simulationStateNew = SimulationState.copySimulationState(simulationState);
                 makeRandomChange(simulationStateNew);
                 double acceptanceProbability = acceptanceProbability(random, simulationState, simulationStateNew, temp);
@@ -51,7 +53,8 @@ public class Simulation {
                 if(acceptanceProbability > nextDouble) {
                     simulationState = simulationStateNew;
                 }
-                System.out.println(simulationState.getScore() + " " + simulationState.getEventInstanceSet().size());
+                simulationState.printScoreSplit();
+                //System.out.println(simulationState.getScore() + " " + simulationState.getEventInstanceSet().size());
             }
 
             temp = temp * alpha;
@@ -70,10 +73,35 @@ public class Simulation {
             case 0: addRandomPerson(simulationState); System.out.println("addRandomPerson"); break;
             case 1: removeRandomPerson(simulationState); System.out.println("removeRandomPerson"); break;
             case 2: addRandomEvent(simulationState); System.out.println("addRandomEvent");break;
-            case 3: removeRandomEvent(simulationState);System.out.println("removeRandomEvent"); break;
+            case 3: changePeople(simulationState);System.out.println("changePeople"); break;
+            //case 3: removeRandomEvent(simulationState);System.out.println("removeRandomEvent"); break;
             case 4: moveRandomEvent(simulationState); System.out.println("moveRandomEvent");break;
             default: throw new IllegalStateException("Wrong random choice!");
         }
+    }
+
+    private void changePeople(SimulationState simulationState){
+        if(simulationState.getEventInstanceSet().isEmpty()){
+            System.out.println("addRandomPerson called when there are no events. Skipping");
+            return;
+        }
+
+        EventInstance randomEventInstance = getRandomFromCollection(simulationState.getEventInstanceSet());
+
+        LinkedList<Person> personList = new LinkedList(people);
+        Collections.shuffle(personList);
+
+        int numberOfPeople = random.nextInt(personList.size()) + 1;
+
+
+        simulationState.removeEventInstance(randomEventInstance);
+
+        HashSet<Person> peopleSetForNewInstance = new HashSet<>();
+        for (int i = 0; i < numberOfPeople; i++) {
+            peopleSetForNewInstance.add(personList.pop());
+        }
+
+        simulationState.createEventInstance(randomEventInstance.getEvent(), randomEventInstance.getStart(), randomEventInstance.getEnd(), peopleSetForNewInstance);
     }
 
     private void addRandomPerson(SimulationState simulationState){
@@ -151,8 +179,8 @@ public class Simulation {
     }
 
     private SimulationState makeRandomStart(SimulationState simulationState) {
-        final int minEventsMultiplyer = 20;
-        final int maxEventsMultiplyer = 30;
+        final int minEventsMultiplyer = 5;
+        final int maxEventsMultiplyer = 5;
 
         final int numberOfEventsMultiplyer = random.nextInt(maxEventsMultiplyer + 1) + minEventsMultiplyer;
         final int numberOfEvents = numberOfEventsMultiplyer * events.size();
