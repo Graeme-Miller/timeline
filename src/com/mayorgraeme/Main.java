@@ -17,39 +17,50 @@ import com.google.common.collect.ImmutableSet;
 
 public class Main {
 
-    public static void main(String[] args) {
-	// write your code here
+    static MaxDurationEventRequirement minHalfHour = new MaxDurationEventRequirement(Duration.ofMinutes(30));
+    static MaxDurationEventRequirement minTwoHour = new MaxDurationEventRequirement(Duration.ofHours(2));
 
-        MaxDurationEventRequirement minHalfHour = new MaxDurationEventRequirement(Duration.ofMinutes(30));
-        MaxDurationEventRequirement minTwoHour = new MaxDurationEventRequirement(Duration.ofHours(2));
+    static MaxDurationEventRequirement maxHalfHour = new MaxDurationEventRequirement(Duration.ofMinutes(30));
+    static MaxDurationEventRequirement maxOneHour = new MaxDurationEventRequirement(Duration.ofHours(1));
+    static MaxDurationEventRequirement maxThreeHour = new MaxDurationEventRequirement(Duration.ofHours(3));
 
-        MaxDurationEventRequirement maxHalfHour = new MaxDurationEventRequirement(Duration.ofMinutes(30));
-        MaxDurationEventRequirement maxOneHour = new MaxDurationEventRequirement(Duration.ofHours(1));
-        MaxDurationEventRequirement maxThreeHour = new MaxDurationEventRequirement(Duration.ofHours(3));
+    static Role villager = new Role("Villager");
+    static Role villageElder = new Role("Village Elder");
 
-        Role villager = new Role("Villager");
-        Role villageElder = new Role("Village Elder");
+    private static Event fight(){
+        MinPeopleOfRoleEventRequirement minFightReq = new MinPeopleOfRoleEventRequirement(ImmutableMap.of(villager, 2d));
+        MaxPeopleOfRoleEventRequirement maxFightReq = new MaxPeopleOfRoleEventRequirement(ImmutableMap.of(villager, 2d));
 
+        return new Event(ImmutableSet.of(maxHalfHour, minFightReq, maxFightReq), "Fight", 3);
+    }
+    private static Event sleep(){
+        return new Event(ImmutableSet.of(minHalfHour), "Sleep", 4);
+    }
+    private static Event moot(){
         Map<Role, Double> minMootRole = new HashMap<>();
         minMootRole.put(villageElder, 1d);
         minMootRole.put(villager, 2d);
 
         MinPeopleOfRoleEventRequirement minMootReq = new MinPeopleOfRoleEventRequirement(minMootRole);
-        MinPeopleOfRoleEventRequirement minFightReq = new MinPeopleOfRoleEventRequirement(ImmutableMap.of(villager, 2d));
-        MaxPeopleOfRoleEventRequirement maxFightReq = new MaxPeopleOfRoleEventRequirement(ImmutableMap.of(villager, 2d));
 
-        Event chopWood = new Event(ImmutableSet.of(minHalfHour), "Chop Wood", 4);
-        Event sleep = new Event(ImmutableSet.of(minHalfHour), "Sleep", 4);
-        Event moot = new Event(ImmutableSet.of(minMootReq, minTwoHour, maxThreeHour), "Moot", 5);
-        Event eat = new Event(ImmutableSet.of(maxOneHour), "Eat", 4);
-        Event fight = new Event(ImmutableSet.of(maxHalfHour, minFightReq, maxFightReq), "Fight", 3);
+        return new Event(ImmutableSet.of(minMootReq, minTwoHour, maxThreeHour), "Moot", 5);
+    }
+    private static Event chopWood(){
+        return new Event(ImmutableSet.of(minHalfHour), "Chop Wood", 4);
+    }
+    private static Event eat(){
+        return new Event(ImmutableSet.of(maxOneHour), "Eat", 4);
+    }
+
+    public static void main(String[] args) {
 
         Set<Event> events = new HashSet<>();
-        events.add(chopWood);
-        events.add(sleep);
-        events.add(moot);
-        events.add(eat);
-        events.add(fight);
+        events.add(sleep());
+        events.add(eat());
+        events.add(moot());
+        events.add(fight());
+        events.add(chopWood());
+
 
         Person graeme = new Person("Graeme", ImmutableSet.of(villageElder, villager), ImmutableSet.of());
         Person lizzie = new Person("Lizzie", ImmutableSet.of(villageElder, villager), ImmutableSet.of());
