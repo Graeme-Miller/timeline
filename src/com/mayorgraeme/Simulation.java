@@ -35,7 +35,7 @@ public class Simulation {
     public void go(){
         simulationState = makeRandomStart(simulationState);
 
-        double temp = 1500;
+        double temp = 150000;
         double alpha = 0.95;
 
 
@@ -179,8 +179,8 @@ public class Simulation {
     }
 
     private SimulationState makeRandomStart(SimulationState simulationState) {
-        final int minEventsMultiplyer = 5;
-        final int maxEventsMultiplyer = 5;
+        final int minEventsMultiplyer = 300;
+        final int maxEventsMultiplyer = 300;
 
         final int numberOfEventsMultiplyer = random.nextInt(maxEventsMultiplyer + 1) + minEventsMultiplyer;
         final int numberOfEvents = numberOfEventsMultiplyer * events.size();

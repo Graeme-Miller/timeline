@@ -28,7 +28,7 @@ public class MaxPeopleOfRoleEventRequirement implements EventRequirement {
             for (Role role : person.getRoleSet()) {
                 if(roleToNumberCopy.containsKey(role)){
                     Double currentValue = roleToNumberCopy.get(role);
-                    if(currentValue == 1){
+                    if(currentValue == 0){
                         return false;
                     }else{
                         roleToNumberCopy.put(role, currentValue - 1);

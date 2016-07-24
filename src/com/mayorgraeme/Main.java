@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.mayorgraeme.event.Event;
 import com.mayorgraeme.event.eventrequirement.MaxDurationEventRequirement;
+import com.mayorgraeme.event.eventrequirement.MaxNumberOfEventRequirement;
 import com.mayorgraeme.event.eventrequirement.MaxPeopleOfRoleEventRequirement;
 import com.mayorgraeme.event.eventrequirement.MinPeopleOfRoleEventRequirement;
 import com.mayorgraeme.person.Person;
@@ -17,6 +18,9 @@ import com.google.common.collect.ImmutableSet;
 
 public class Main {
 
+    static Role villager = new Role("Villager");
+    static Role villageElder = new Role("Village Elder");
+
     static MaxDurationEventRequirement minHalfHour = new MaxDurationEventRequirement(Duration.ofMinutes(30));
     static MaxDurationEventRequirement minTwoHour = new MaxDurationEventRequirement(Duration.ofHours(2));
 
@@ -24,8 +28,7 @@ public class Main {
     static MaxDurationEventRequirement maxOneHour = new MaxDurationEventRequirement(Duration.ofHours(1));
     static MaxDurationEventRequirement maxThreeHour = new MaxDurationEventRequirement(Duration.ofHours(3));
 
-    static Role villager = new Role("Villager");
-    static Role villageElder = new Role("Village Elder");
+    static MaxPeopleOfRoleEventRequirement maxOnePerson = new MaxPeopleOfRoleEventRequirement(ImmutableMap.of(villager, 1d));
 
     private static Event fight(){
         MinPeopleOfRoleEventRequirement minFightReq = new MinPeopleOfRoleEventRequirement(ImmutableMap.of(villager, 2d));
@@ -34,7 +37,7 @@ public class Main {
         return new Event(ImmutableSet.of(maxHalfHour, minFightReq, maxFightReq), "Fight", 3);
     }
     private static Event sleep(){
-        return new Event(ImmutableSet.of(minHalfHour), "Sleep", 4);
+        return new Event(ImmutableSet.of(minHalfHour, maxOnePerson), "Sleep", 4);
     }
     private static Event moot(){
         Map<Role, Double> minMootRole = new HashMap<>();
@@ -43,13 +46,15 @@ public class Main {
 
         MinPeopleOfRoleEventRequirement minMootReq = new MinPeopleOfRoleEventRequirement(minMootRole);
 
-        return new Event(ImmutableSet.of(minMootReq, minTwoHour, maxThreeHour), "Moot", 5);
+        MaxNumberOfEventRequirement maxNumberOfEventRequirement = new MaxNumberOfEventRequirement(1);
+
+        return new Event(ImmutableSet.of(minMootReq, minTwoHour, maxThreeHour, maxNumberOfEventRequirement), "Moot", 5);
     }
     private static Event chopWood(){
-        return new Event(ImmutableSet.of(minHalfHour), "Chop Wood", 4);
+        return new Event(ImmutableSet.of(minHalfHour, maxOnePerson), "Chop Wood", 4);
     }
     private static Event eat(){
-        return new Event(ImmutableSet.of(maxOneHour), "Eat", 4);
+        return new Event(ImmutableSet.of(maxOneHour, maxOnePerson), "Eat", 4);
     }
 
     public static void main(String[] args) {
